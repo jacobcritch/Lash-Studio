@@ -6,6 +6,7 @@ public enum ClientState
 {
     WaitingForSpawn,
     WaitingForService,
+    WaitingAtService,
     BeingServiced,
     WantsToMove,
     MovingToTarget,

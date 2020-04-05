@@ -5,10 +5,9 @@ using UnityEngine;
 public class LashBed : MonoBehaviour
 {
     public bool occupied;
+    public bool serviceComplete;
 
     public GameObject occupant;
-
-    public bool serviceInProgress;
 
     public float serviceLengthInSeconds = 5; // TODO: Make abstract class / interface 'Service' -- LashFill : Service, LashFullSet : Service etc..
 
@@ -20,13 +19,12 @@ public class LashBed : MonoBehaviour
 
     private void Update()
     {
-        if (serviceInProgress == false &&  == true)
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
         Debug.LogError(collision.collider.name + " hit me!");
-
+        
         if (collision.collider.CompareTag("Player"))
         {
             Player playerScript = collision.collider.GetComponent<Player>();
@@ -35,9 +33,13 @@ public class LashBed : MonoBehaviour
 
             if (occupied)
             {
-                occupant.GetComponent<Client>().currentState = ClientState.BeingServiced;
-                StartCoroutine(playerScript.StartService(serviceLengthInSeconds, this.gameObject));
+                StartCoroutine(playerScript.StartService(serviceLengthInSeconds, occupant));
             }
+        }
+
+        if (collision.collider.CompareTag("Client"))
+        {
+            Physics2D.IgnoreCollision(collision.collider, GetComponents<Collider2D>()[1]);
         }
     }
 
@@ -45,8 +47,8 @@ public class LashBed : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Client"))
         {
-            occupied = true;
             occupant = other.gameObject;
+            occupied = true;
         }
     }
 
@@ -55,6 +57,7 @@ public class LashBed : MonoBehaviour
         if (other.gameObject.CompareTag("Client"))
         {
             occupied = false;
+            occupant = null;
         }
     }
 }

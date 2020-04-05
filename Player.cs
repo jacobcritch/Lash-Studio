@@ -32,13 +32,14 @@ public class Player : MonoBehaviour
         target = transform.position;
     }
 
-    public IEnumerator StartService(float waitTime, GameObject lashBed)
+    public IEnumerator StartService(float waitTime, GameObject client)
     {
         float count = 0;
 
         Locked = true;
 
-        lashBed.GetComponent<LashBed>().serviceInProgress = true;
+        client.GetComponent<Client>().currentState = ClientState.BeingServiced;
+
         while (count < waitTime)
         {
             UpdateServiceMeter(waitTime - count);
@@ -46,7 +47,7 @@ public class Player : MonoBehaviour
             count += 1;
         }
 
-        lashBed.GetComponent<LashBed>().serviceInProgress = false;
+        client.GetComponent<Client>().currentState = ClientState.WantsToExit;
         Locked = false;
     }
 

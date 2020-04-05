@@ -6,13 +6,13 @@ public class Client : MonoBehaviour
 {
     public float speed = 4.0f;
 
+    public Vector3 exit;
     private Vector3 target;
     private GameObject targetObject;
 
     public ServiceType serviceType;
     public ClientState currentState;
 
-    //private bool lookingForTarget;
 
     // Start is called before the first frame update
     private void Start()
@@ -20,6 +20,7 @@ public class Client : MonoBehaviour
         //lookingForTarget = false;
         serviceType = GetRandomServiceType();
         currentState = ClientState.WaitingForSpawn;
+        exit = FindExit();
         target = FindWaitingArea();
         Debug.Log(serviceType);
     }
@@ -40,11 +41,14 @@ public class Client : MonoBehaviour
 
         else if (currentState == ClientState.WantsToExit)
         {
-            target = FindExit();
+            if (target != exit)
+                target = exit;
 
-            if (transform.position == target)
+            MoveToTarget();
+
+            if (transform.position == exit)
             {
-                Destroy(this);
+                Destroy(this.gameObject);
             }
         }
     }
@@ -62,6 +66,8 @@ public class Client : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
+            other.GetComponent<Player>().StopMovement();
+
             if (currentState == ClientState.WaitingForService)
             {
                 Debug.LogError("Looking for service area");
@@ -72,6 +78,12 @@ public class Client : MonoBehaviour
         else if (other.gameObject.CompareTag("WaitingArea"))
         {
                 currentState = ClientState.WaitingForService;
+                Debug.Log(currentState);
+        }
+
+        else if (other.gameObject.CompareTag("LashBed"))
+        {
+                currentState = ClientState.WaitingAtService;
                 Debug.Log(currentState);
         }
     }
@@ -150,9 +162,7 @@ public class Client : MonoBehaviour
 
     private Vector3 FindExit()
     {
-        // -8.5, -2.25, 0.0
-
-
+        return new Vector3(8.5f, -3.5f, 0.0f);
     }
 
     private ServiceType GetRandomServiceType()
