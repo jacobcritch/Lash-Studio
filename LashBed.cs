@@ -15,12 +15,16 @@ public class LashBed : MonoBehaviour
     private void Start()
     {
         occupied = false;
+        
     }
 
     private void Update()
     {
+        //foreach (GameObject client in GameObject.FindGameObjectsWithTag("Client"))
+            //Physics2D.IgnoreCollision(GetComponents<Collider2D>()[1], client.GetComponent<Collider2D>());
     }
 
+    /*
     private void OnCollisionEnter2D(Collision2D collision)
     {
         Debug.LogError(collision.collider.name + " hit me!");
@@ -36,15 +40,23 @@ public class LashBed : MonoBehaviour
                 StartCoroutine(playerScript.StartService(serviceLengthInSeconds, occupant));
             }
         }
-
-        if (collision.collider.CompareTag("Client"))
-        {
-            Physics2D.IgnoreCollision(collision.collider, GetComponents<Collider2D>()[1]);
-        }
     }
+    */
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (other.CompareTag("Player"))
+        {
+            Player playerScript = other.GetComponent<Player>();
+
+            playerScript.StopMovement();
+
+            if (occupied)
+            {
+                StartCoroutine(playerScript.StartService(serviceLengthInSeconds, occupant));
+            }
+        }
+
         if (other.gameObject.CompareTag("Client"))
         {
             occupant = other.gameObject;

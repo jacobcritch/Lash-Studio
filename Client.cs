@@ -66,7 +66,9 @@ public class Client : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Player"))
         {
+            Debug.LogError("Player touched client");
             other.GetComponent<Player>().StopMovement();
+            Debug.LogError(currentState);
 
             if (currentState == ClientState.WaitingForService)
             {
@@ -77,14 +79,20 @@ public class Client : MonoBehaviour
 
         else if (other.gameObject.CompareTag("WaitingArea"))
         {
+            if (Vector3.Distance(target, transform.position) <= 1)
+            {
                 currentState = ClientState.WaitingForService;
                 Debug.Log(currentState);
+            }
         }
 
         else if (other.gameObject.CompareTag("LashBed"))
         {
+            if (Vector3.Distance(target, transform.position) <= 1)
+            {
                 currentState = ClientState.WaitingAtService;
                 Debug.Log(currentState);
+            }     
         }
     }
 
